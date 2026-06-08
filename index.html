@@ -7,20 +7,21 @@
 <script src="./ethers.min.js"></script>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-body { background:#0a0e1a; color:#e0e6ff; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; min-height:100vh; padding:16px; }
+body { background:#0a0e1a; color:#e0e6ff; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; min-height:100vh; padding:16px 14px 30px; }
 
-.header { text-align:center; padding:20px 0 16px; }
-.header h1 { font-size:26px; font-weight:800; background:linear-gradient(135deg,#7c3aed,#3b82f6); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-.header p { color:#64748b; font-size:13px; margin-top:4px; }
+.header { text-align:center; padding:18px 0 14px; }
+.header h1 { font-size:24px; font-weight:800; background:linear-gradient(135deg,#7c3aed,#3b82f6); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.header p { color:#64748b; font-size:12px; margin-top:3px; }
 
-.card { background:#111827; border:1px solid #1e293b; border-radius:16px; padding:16px; margin-bottom:12px; }
+.card { background:#111827; border:1px solid #1e293b; border-radius:16px; padding:14px; margin-bottom:10px; }
 
-.wallet-status { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
-.dot { width:9px; height:9px; border-radius:50%; background:#ef4444; flex-shrink:0; }
-.dot.on { background:#22c55e; }
-.wallet-addr { font-size:13px; color:#94a3b8; }
+.wallet-status { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+.dot { width:8px; height:8px; border-radius:50%; background:#ef4444; flex-shrink:0; }
+.dot.on { background:#22c55e; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+.wallet-addr { font-size:12px; color:#94a3b8; }
 
-.btn { width:100%; padding:15px; border-radius:12px; border:none; font-size:15px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:opacity .15s; }
+.btn { width:100%; padding:14px; border-radius:12px; border:none; font-size:14px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:opacity .15s; }
 .btn:active { opacity:.75; }
 .btn:disabled { opacity:.5; cursor:not-allowed; }
 .btn-purple { background:linear-gradient(135deg,#7c3aed,#3b82f6); color:#fff; }
@@ -28,55 +29,93 @@ body { background:#0a0e1a; color:#e0e6ff; font-family:-apple-system,BlinkMacSyst
 .btn-red { background:#dc2626; color:#fff; }
 .btn-orange { background:#ea580c; color:#fff; }
 
-.balances { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:12px; }
-.bal-card { background:#0f172a; border:1px solid #1e293b; border-radius:12px; padding:12px 6px; text-align:center; }
-.bal-label { font-size:10px; color:#64748b; text-transform:uppercase; letter-spacing:.5px; margin-bottom:4px; }
-.bal-amount { font-size:15px; font-weight:700; }
-.bal-usd { font-size:10px; color:#22c55e; margin-top:2px; }
+.balances { display:grid; grid-template-columns:repeat(3,1fr); gap:7px; margin-bottom:10px; }
+.bal-card { background:#0f172a; border:1px solid #1e293b; border-radius:12px; padding:10px 5px; text-align:center; }
+.bal-label { font-size:9px; color:#64748b; text-transform:uppercase; letter-spacing:.5px; margin-bottom:3px; }
+.bal-amount { font-size:14px; font-weight:700; }
+.bal-usd { font-size:10px; color:#22c55e; margin-top:1px; }
 
 .total-row { display:flex; justify-content:space-between; align-items:center; }
-.total-label { font-size:12px; color:#64748b; }
-.total-val { font-size:22px; font-weight:800; color:#22c55e; }
-.contract-addr { font-size:10px; color:#475569; word-break:break-all; margin-top:2px; }
-.refresh { background:#1e293b; border:1px solid #334155; border-radius:8px; padding:8px 12px; color:#94a3b8; cursor:pointer; font-size:16px; flex-shrink:0; }
+.total-label { font-size:11px; color:#64748b; }
+.total-val { font-size:20px; font-weight:800; color:#22c55e; }
+.contract-addr { font-size:9px; color:#475569; word-break:break-all; margin-top:2px; }
+.refresh { background:#1e293b; border:1px solid #334155; border-radius:8px; padding:7px 10px; color:#94a3b8; cursor:pointer; font-size:15px; flex-shrink:0; }
 
-.tabs { display:flex; gap:6px; margin-bottom:12px; }
-.tab { flex:1; padding:10px 4px; border-radius:10px; border:1px solid #1e293b; background:#0f172a; color:#64748b; font-size:12px; font-weight:600; cursor:pointer; text-align:center; }
-.tab.active { background:#1e293b; color:#e2e8f0; border-color:#3b82f6; }
+/* MAIN NAV TABS */
+.nav-tabs { display:flex; gap:5px; margin-bottom:10px; overflow-x:auto; }
+.nav-tab { flex-shrink:0; padding:9px 12px; border-radius:10px; border:1px solid #1e293b; background:#0f172a; color:#64748b; font-size:11px; font-weight:600; cursor:pointer; white-space:nowrap; }
+.nav-tab.active { background:#1e293b; color:#e2e8f0; border-color:#3b82f6; }
 
 .panel { display:none; }
 .panel.active { display:block; }
 
-.ttabs { display:flex; gap:6px; margin-bottom:12px; }
-.ttab { flex:1; padding:8px; border-radius:8px; border:1px solid #1e293b; background:#0f172a; color:#64748b; font-size:12px; font-weight:600; cursor:pointer; text-align:center; }
+.ttabs { display:flex; gap:5px; margin-bottom:10px; }
+.ttab { flex:1; padding:8px 4px; border-radius:8px; border:1px solid #1e293b; background:#0f172a; color:#64748b; font-size:11px; font-weight:600; cursor:pointer; text-align:center; }
 .ttab.active { border-color:#22c55e; color:#22c55e; background:#052e16; }
 
-.inp-wrap { position:relative; margin-bottom:10px; }
-.inp-wrap input { width:100%; background:#0f172a; border:1px solid #1e293b; border-radius:10px; padding:13px 60px 13px 14px; color:#e2e8f0; font-size:16px; outline:none; }
+.inp-wrap { position:relative; margin-bottom:9px; }
+.inp-wrap input { width:100%; background:#0f172a; border:1px solid #1e293b; border-radius:10px; padding:12px 55px 12px 13px; color:#e2e8f0; font-size:16px; outline:none; }
 .inp-wrap input:focus { border-color:#3b82f6; }
-.maxbtn { position:absolute; right:8px; top:50%; transform:translateY(-50%); background:#1e293b; border:none; border-radius:6px; padding:4px 8px; color:#3b82f6; font-size:11px; font-weight:700; cursor:pointer; }
+.maxbtn { position:absolute; right:7px; top:50%; transform:translateY(-50%); background:#1e293b; border:none; border-radius:6px; padding:4px 7px; color:#3b82f6; font-size:11px; font-weight:700; cursor:pointer; }
 
-.info { background:#0f172a; border:1px solid #1e293b; border-radius:10px; padding:12px; font-size:12px; color:#64748b; margin-bottom:10px; line-height:1.6; }
-.info b { color:#94a3b8; }
+.info-box { background:#0f172a; border:1px solid #1e293b; border-radius:10px; padding:11px; font-size:12px; color:#64748b; margin-bottom:9px; line-height:1.6; }
+.info-box b { color:#94a3b8; }
 
-.status { background:#020617; border:1px solid #1e293b; border-radius:10px; padding:12px; font-size:12px; font-family:monospace; min-height:44px; line-height:1.7; margin-top:10px; word-break:break-all; }
+.status-box { background:#020617; border:1px solid #1e293b; border-radius:10px; padding:11px; font-size:12px; font-family:monospace; min-height:40px; line-height:1.7; margin-top:9px; word-break:break-all; }
 .s-ok { color:#22c55e; border-color:#166534; }
 .s-err { color:#ef4444; border-color:#7f1d1d; }
 .s-load { color:#3b82f6; border-color:#1e3a5f; }
 .s-def { color:#64748b; }
 
-.sec { background:#052e16; border:1px solid #166534; border-radius:10px; padding:12px; font-size:11px; color:#86efac; line-height:1.7; margin-top:4px; }
+.wrap-info { background:#1c1400; border:1px solid #78350f; border-radius:10px; padding:11px; font-size:12px; color:#fbbf24; line-height:1.7; margin-bottom:9px; }
+.sec { background:#052e16; border:1px solid #166534; border-radius:10px; padding:11px; font-size:11px; color:#86efac; line-height:1.7; margin-top:4px; }
 
-.wrap-info { background:#1c1400; border:1px solid #78350f; border-radius:10px; padding:12px; font-size:12px; color:#fbbf24; line-height:1.7; margin-bottom:10px; }
+/* PNL SECTION */
+.pnl-grid { display:grid; grid-template-columns:1fr 1fr; gap:7px; margin-bottom:10px; }
+.pnl-card { background:#0f172a; border:1px solid #1e293b; border-radius:12px; padding:12px; text-align:center; }
+.pnl-label { font-size:10px; color:#64748b; text-transform:uppercase; letter-spacing:.5px; margin-bottom:4px; }
+.pnl-val { font-size:18px; font-weight:800; }
+.pnl-pos { color:#22c55e; }
+.pnl-neg { color:#ef4444; }
+.pnl-neu { color:#94a3b8; }
+
+/* TX LIST */
+.tx-list { max-height:320px; overflow-y:auto; }
+.tx-item { background:#0f172a; border:1px solid #1e293b; border-radius:10px; padding:11px; margin-bottom:7px; }
+.tx-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; }
+.tx-type { font-size:11px; font-weight:700; padding:2px 7px; border-radius:5px; }
+.tx-arb { background:#052e16; color:#22c55e; }
+.tx-dep { background:#1e3a5f; color:#3b82f6; }
+.tx-wd { background:#3b0f0f; color:#ef4444; }
+.tx-time { font-size:10px; color:#475569; }
+.tx-detail { font-size:11px; color:#64748b; line-height:1.6; }
+.tx-profit { font-size:13px; font-weight:700; color:#22c55e; }
+.tx-hash { font-size:10px; color:#3b82f6; word-break:break-all; }
+
+/* BOT STATUS */
+.bot-status-row { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+.bot-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+.bot-online { background:#22c55e; animation: pulse 2s infinite; }
+.bot-offline { background:#ef4444; }
+.bot-label { font-size:13px; font-weight:700; }
+.bot-sub { font-size:11px; color:#64748b; }
+
+.stat-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #1e293b; font-size:12px; }
+.stat-row:last-child { border-bottom:none; }
+.stat-key { color:#64748b; }
+.stat-val { color:#e2e8f0; font-weight:600; }
+
+.loading-spinner { text-align:center; padding:20px; color:#475569; font-size:12px; }
 </style>
 </head>
 <body>
 
 <div class="header">
   <h1>⚡ DeFi91 Manager</h1>
-  <p>Kelola Dana Smart Contract — Base Mainnet</p>
+  <p>Kelola & Monitor Bot Arbitrage — Base Mainnet</p>
 </div>
 
+<!-- WALLET CONNECT -->
 <div class="card">
   <div class="wallet-status">
     <div class="dot" id="dot"></div>
@@ -85,6 +124,7 @@ body { background:#0a0e1a; color:#e0e6ff; font-family:-apple-system,BlinkMacSyst
   <button class="btn btn-purple" id="connectBtn" onclick="connectWallet()">🔗 Connect MetaMask</button>
 </div>
 
+<!-- BALANCES -->
 <div class="balances">
   <div class="bal-card">
     <div class="bal-label">ETH</div>
@@ -110,19 +150,74 @@ body { background:#0a0e1a; color:#e0e6ff; font-family:-apple-system,BlinkMacSyst
       <div class="total-val" id="totalVal">$—</div>
       <div class="contract-addr">0xc342ee4efeaaeb76b37d6911f755397aaeca41e9</div>
     </div>
-    <button class="refresh" onclick="loadBalances()">↻</button>
+    <button class="refresh" onclick="refreshAll()" title="Refresh">↻</button>
   </div>
 </div>
 
-<div class="tabs">
-  <div class="tab active" onclick="switchTab('deposit',this)">⬇️ Deposit</div>
-  <div class="tab" onclick="switchTab('withdraw',this)">⬆️ Withdraw</div>
-  <div class="tab" onclick="switchTab('wrap',this)">🔄 Wrap ETH</div>
+<!-- MAIN NAVIGATION -->
+<div class="nav-tabs">
+  <div class="nav-tab active" onclick="switchNav('monitor',this)">📊 Monitor</div>
+  <div class="nav-tab" onclick="switchNav('deposit',this)">⬇️ Deposit</div>
+  <div class="nav-tab" onclick="switchNav('withdraw',this)">⬆️ Withdraw</div>
+  <div class="nav-tab" onclick="switchNav('wrap',this)">🔄 Wrap</div>
 </div>
 
-<!-- DEPOSIT -->
-<div class="panel active card" id="panel-deposit">
-  <div style="font-size:14px;font-weight:700;margin-bottom:12px;">⬇️ Kirim Token ke Contract</div>
+<!-- PANEL: MONITOR -->
+<div class="panel active" id="panel-monitor">
+
+  <!-- Bot Status -->
+  <div class="card">
+    <div class="bot-status-row">
+      <div class="bot-dot bot-online" id="botDot"></div>
+      <div>
+        <div class="bot-label" id="botLabel">Mengecek status bot...</div>
+        <div class="bot-sub" id="botSub">Railway • Base Mainnet</div>
+      </div>
+    </div>
+    <div class="stat-row"><span class="stat-key">Contract</span><span class="stat-val" style="font-size:10px">0xc342ee4e...ca41e9</span></div>
+    <div class="stat-row"><span class="stat-key">Network</span><span class="stat-val">Base Mainnet</span></div>
+    <div class="stat-row"><span class="stat-key">Mode</span><span class="stat-val" style="color:#22c55e">Live Trading ✅</span></div>
+    <div class="stat-row"><span class="stat-key">Scan Interval</span><span class="stat-val">500ms</span></div>
+    <div class="stat-row"><span class="stat-key">Min Profit</span><span class="stat-val">$0.50</span></div>
+  </div>
+
+  <!-- PnL Summary -->
+  <div class="card">
+    <div style="font-size:13px;font-weight:700;margin-bottom:10px;">📈 Profit & Loss</div>
+    <div class="pnl-grid">
+      <div class="pnl-card">
+        <div class="pnl-label">Total Profit</div>
+        <div class="pnl-val pnl-pos" id="totalProfit">$0.00</div>
+      </div>
+      <div class="pnl-card">
+        <div class="pnl-label">Jumlah Trade</div>
+        <div class="pnl-val pnl-neu" id="totalTrades">0</div>
+      </div>
+      <div class="pnl-card">
+        <div class="pnl-label">Modal Awal</div>
+        <div class="pnl-val pnl-neu" id="initialCapital">$47.31</div>
+      </div>
+      <div class="pnl-card">
+        <div class="pnl-label">ROI</div>
+        <div class="pnl-val pnl-neu" id="roiVal">0.00%</div>
+      </div>
+    </div>
+    <button class="btn" style="background:#1e293b;color:#94a3b8;font-size:12px;padding:10px;" onclick="loadTxHistory()">↻ Refresh Riwayat</button>
+  </div>
+
+  <!-- Transaction History -->
+  <div class="card">
+    <div style="font-size:13px;font-weight:700;margin-bottom:10px;">📋 Riwayat Transaksi</div>
+    <div class="tx-list" id="txList">
+      <div class="loading-spinner">Klik "Refresh Riwayat" untuk memuat transaksi...</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- PANEL: DEPOSIT -->
+<div class="panel card" id="panel-deposit">
+  <div style="font-size:13px;font-weight:700;margin-bottom:10px;">⬇️ Kirim Token ke Contract</div>
   <div class="ttabs" id="dep-ttabs">
     <div class="ttab active" onclick="selDep('ETH',this)">ETH</div>
     <div class="ttab" onclick="selDep('WETH',this)">WETH</div>
@@ -132,14 +227,14 @@ body { background:#0a0e1a; color:#e0e6ff; font-family:-apple-system,BlinkMacSyst
     <input type="number" id="depAmt" placeholder="0.00" step="any" min="0">
     <button class="maxbtn" onclick="setMax('dep')">MAX</button>
   </div>
-  <div class="info" id="depInfo"><b>ETH:</b> Kirim ETH dari wallet Anda ke contract.</div>
+  <div class="info-box" id="depInfo"><b>ETH:</b> Kirim ETH dari wallet Anda ke contract.</div>
   <button class="btn btn-green" id="depBtn" onclick="doDeposit()">⬇️ Deposit ke Contract</button>
-  <div class="status s-def" id="depStatus">Hubungkan MetaMask untuk mulai.</div>
+  <div class="status-box s-def" id="depStatus">Hubungkan MetaMask untuk mulai.</div>
 </div>
 
-<!-- WITHDRAW -->
+<!-- PANEL: WITHDRAW -->
 <div class="panel card" id="panel-withdraw">
-  <div style="font-size:14px;font-weight:700;margin-bottom:12px;">⬆️ Tarik Token dari Contract</div>
+  <div style="font-size:13px;font-weight:700;margin-bottom:10px;">⬆️ Tarik Token dari Contract</div>
   <div class="ttabs" id="wd-ttabs">
     <div class="ttab active" onclick="selWd('USDC',this)">USDC</div>
     <div class="ttab" onclick="selWd('WETH',this)">WETH</div>
@@ -149,26 +244,23 @@ body { background:#0a0e1a; color:#e0e6ff; font-family:-apple-system,BlinkMacSyst
     <input type="number" id="wdAmt" placeholder="0.00" step="any" min="0">
     <button class="maxbtn" onclick="setMax('wd')">MAX</button>
   </div>
-  <div class="info" id="wdInfo"><b>USDC:</b> Tarik USDC dari contract ke wallet Anda.</div>
+  <div class="info-box" id="wdInfo"><b>USDC:</b> Tarik USDC dari contract ke wallet Anda.</div>
   <button class="btn btn-red" id="wdBtn" onclick="doWithdraw()">⬆️ Withdraw ke Wallet</button>
-  <div class="status s-def" id="wdStatus">Hubungkan MetaMask untuk mulai.</div>
+  <div class="status-box s-def" id="wdStatus">Hubungkan MetaMask untuk mulai.</div>
 </div>
 
-<!-- WRAP ETH -->
+<!-- PANEL: WRAP -->
 <div class="panel card" id="panel-wrap">
-  <div style="font-size:14px;font-weight:700;margin-bottom:12px;">🔄 Konversi ETH → WETH</div>
+  <div style="font-size:13px;font-weight:700;margin-bottom:10px;">🔄 Konversi ETH → WETH</div>
   <div class="wrap-info">
     ⚠️ <b>Cara Wrap ETH:</b><br>
-    Contract ini tidak punya fungsi wrap internal. Untuk konversi ETH → WETH, gunakan cara berikut:<br><br>
-    1. Buka <b>app.uniswap.org</b> di MetaMask Browser<br>
-    2. Swap <b>ETH → WETH</b> sejumlah yang diinginkan<br>
-    3. Kembali ke dashboard ini → tab <b>Deposit</b> → pilih <b>WETH</b><br>
-    4. Kirim WETH ke contract
+    1. Tarik ETH dari contract ke wallet (tombol di bawah)<br>
+    2. Buka <b>app.uniswap.org</b> → swap ETH → WETH<br>
+    3. Kembali ke tab <b>Deposit</b> → pilih WETH → kirim ke contract
   </div>
-  <div class="info">ETH di contract saat ini: <b id="ethInContract">—</b><br>
-  ETH ini tidak bisa digunakan bot untuk trading. Gunakan tombol di bawah untuk menarik ETH kembali ke wallet Anda, lalu wrap manual di Uniswap.</div>
+  <div class="info-box">ETH di contract: <b id="ethInContract">—</b></div>
   <button class="btn btn-orange" id="wrapBtn" onclick="doWithdrawETH()">⬆️ Tarik ETH ke Wallet</button>
-  <div class="status s-def" id="wrapStatus">Hubungkan MetaMask untuk mulai.</div>
+  <div class="status-box s-def" id="wrapStatus">Hubungkan MetaMask untuk mulai.</div>
 </div>
 
 <div class="sec">🔒 <b>Keamanan:</b> Dashboard berjalan 100% di browser Anda. Tidak ada server. Semua transaksi ditandatangani langsung oleh MetaMask. Private key tidak pernah keluar dari perangkat Anda.</div>
@@ -180,99 +272,46 @@ const USDC_ADDR = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
 const BASE_RPC  = "https://mainnet.base.org";
 const BASE_CHAIN_HEX = "0x2105";
 
-// ABI langsung dari artifact Hardhat - format yang benar
+// Event topics (keccak256)
+const TOPIC_ARB_EXECUTED = "0xac5e73d65c7df1a72a57e0d680767c7e764095957ee44ec036b761799b56afd2";
+const TOPIC_TOKEN_WD     = "0xa2bd9fcfcdba69f52bcd9a520846ad4bd685b187483f53efc42d035b2ddebff0";
+const TOPIC_ETH_WD       = "0x043f607a14d3b4f0a11a0b2e192bbfcd894298ba5abf22553be6081406db28aa";
+
 const CONTRACT_ABI = [
-  {
-    "inputs": [],
-    "name": "withdrawETH",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {"internalType": "address", "name": "token", "type": "address"},
-      {"internalType": "uint256", "name": "amount", "type": "uint256"}
-    ],
-    "name": "withdrawToken",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "pause",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "unpause",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "owner",
-    "outputs": [{"internalType": "address", "name": "", "type": "address"}],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "paused",
-    "outputs": [{"internalType": "bool", "name": "", "type": "bool"}],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "stateMutability": "payable",
-    "type": "receive"
-  }
+  {"inputs":[],"name":"withdrawETH","outputs":[],"stateMutability":"nonpayable","type":"function"},
+  {"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"withdrawToken","outputs":[],"stateMutability":"nonpayable","type":"function"},
+  {"inputs":[],"name":"pause","outputs":[],"stateMutability":"nonpayable","type":"function"},
+  {"inputs":[],"name":"unpause","outputs":[],"stateMutability":"nonpayable","type":"function"},
+  {"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},
+  {"inputs":[],"name":"paused","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},
+  {"stateMutability":"payable","type":"receive"}
 ];
 
 const ERC20_ABI = [
-  {
-    "inputs": [{"name": "account", "type": "address"}],
-    "name": "balanceOf",
-    "outputs": [{"name": "", "type": "uint256"}],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {"name": "to", "type": "address"},
-      {"name": "amount", "type": "uint256"}
-    ],
-    "name": "transfer",
-    "outputs": [{"name": "", "type": "bool"}],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  }
+  {"inputs":[{"name":"account","type":"address"}],"name":"balanceOf","outputs":[{"name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+  {"inputs":[{"name":"to","type":"address"},{"name":"amount","type":"uint256"}],"name":"transfer","outputs":[{"name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"}
 ];
 
 let provider, signer, userAddr;
 let depToken = "ETH", wdToken = "USDC";
 let bals = { eth:0, weth:0, usdc:0 };
 let ethPrice = 1700;
+let initialCapital = 47.31;
+let totalProfitUSD = 0;
+let totalTrades = 0;
 
 // ── CONNECT ──────────────────────────────────────────
 async function connectWallet() {
   const btn = document.getElementById("connectBtn");
   if (!window.ethereum) {
-    setS("depStatus","s-err","❌ MetaMask tidak ditemukan. Buka halaman ini di dalam MetaMask Browser (ikon globe di bawah MetaMask).");
+    setS("depStatus","s-err","❌ Buka halaman ini di dalam MetaMask Browser (ikon globe di bawah MetaMask).");
     return;
   }
   try {
     btn.textContent = "⏳ Menghubungkan...";
     btn.disabled = true;
-
     const accounts = await window.ethereum.request({ method:"eth_requestAccounts" });
     userAddr = accounts[0];
-
-    // Switch to Base Mainnet
     const chainId = await window.ethereum.request({ method:"eth_chainId" });
     if (chainId !== BASE_CHAIN_HEX) {
       try {
@@ -280,32 +319,27 @@ async function connectWallet() {
       } catch(se) {
         if (se.code === 4902) {
           await window.ethereum.request({ method:"wallet_addEthereumChain", params:[{
-            chainId: BASE_CHAIN_HEX,
-            chainName: "Base Mainnet",
-            rpcUrls: ["https://mainnet.base.org"],
-            nativeCurrency: {name:"ETH",symbol:"ETH",decimals:18},
-            blockExplorerUrls: ["https://basescan.org"]
+            chainId:BASE_CHAIN_HEX, chainName:"Base Mainnet",
+            rpcUrls:["https://mainnet.base.org"],
+            nativeCurrency:{name:"ETH",symbol:"ETH",decimals:18},
+            blockExplorerUrls:["https://basescan.org"]
           }]});
         } else throw se;
       }
     }
-
     provider = new ethers.providers.Web3Provider(window.ethereum, "any");
     signer   = provider.getSigner();
-
     const short = userAddr.slice(0,6)+"..."+userAddr.slice(-4);
     document.getElementById("dot").classList.add("on");
     document.getElementById("walletAddr").textContent = "✅ "+short+" • Base Mainnet";
     btn.textContent = "✅ Terhubung";
     btn.style.background = "#16a34a";
-
     setS("depStatus","s-def","✅ Terhubung. Pilih token dan masukkan jumlah.");
     setS("wdStatus","s-def","✅ Terhubung. Pilih token dan masukkan jumlah.");
-    setS("wrapStatus","s-def","✅ Terhubung. Klik tombol untuk tarik ETH ke wallet.");
-
+    setS("wrapStatus","s-def","✅ Terhubung. Klik tombol untuk tarik ETH.");
     await fetchEthPrice();
     await loadBalances();
-
+    await loadTxHistory();
   } catch(e) {
     btn.textContent = "🔗 Connect MetaMask";
     btn.disabled = false;
@@ -314,7 +348,7 @@ async function connectWallet() {
   }
 }
 
-// ── BALANCES via direct RPC ───────────────────────────
+// ── RPC ──────────────────────────────────────────────
 async function rpc(method, params) {
   const r = await fetch(BASE_RPC, {
     method:"POST", headers:{"Content-Type":"application/json"},
@@ -325,15 +359,14 @@ async function rpc(method, params) {
   return j.result;
 }
 
+// ── BALANCES ─────────────────────────────────────────
 async function loadBalances() {
   try {
     const ethHex  = await rpc("eth_getBalance",[CONTRACT,"latest"]);
     bals.eth = parseInt(ethHex,16)/1e18;
-
     const balOf = "0x70a08231"+CONTRACT.slice(2).padStart(64,"0");
     const wethHex = await rpc("eth_call",[{to:WETH_ADDR,data:balOf},"latest"]);
     bals.weth = parseInt(wethHex,16)/1e18;
-
     const usdcHex = await rpc("eth_call",[{to:USDC_ADDR,data:balOf},"latest"]);
     bals.usdc = parseInt(usdcHex,16)/1e6;
 
@@ -347,7 +380,17 @@ async function loadBalances() {
     const total = bals.eth*ethPrice + bals.weth*ethPrice + bals.usdc;
     document.getElementById("totalVal").textContent = "$"+total.toFixed(2);
     document.getElementById("ethInContract").textContent = bals.eth.toFixed(6)+" ETH (~$"+(bals.eth*ethPrice).toFixed(2)+")";
-  } catch(e){ console.error("loadBalances error:", e); }
+
+    // Update PnL
+    const currentTotal = total;
+    const pnl = currentTotal - initialCapital;
+    const roi = ((pnl / initialCapital) * 100);
+    document.getElementById("totalProfit").textContent = (pnl >= 0 ? "+" : "") + "$"+pnl.toFixed(4);
+    document.getElementById("totalProfit").className = "pnl-val " + (pnl >= 0 ? "pnl-pos" : "pnl-neg");
+    document.getElementById("roiVal").textContent = (roi >= 0 ? "+" : "") + roi.toFixed(4)+"%";
+    document.getElementById("roiVal").className = "pnl-val " + (roi >= 0 ? "pnl-pos" : "pnl-neg");
+    document.getElementById("initialCapital").textContent = "$"+initialCapital.toFixed(2);
+  } catch(e){ console.error("loadBalances:", e); }
 }
 
 async function fetchEthPrice() {
@@ -358,9 +401,123 @@ async function fetchEthPrice() {
   } catch(e){}
 }
 
-// ── TABS ─────────────────────────────────────────────
-function switchTab(name, el) {
-  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+// ── TX HISTORY via eth_getLogs ────────────────────────
+async function loadTxHistory() {
+  const txList = document.getElementById("txList");
+  txList.innerHTML = '<div class="loading-spinner">⏳ Memuat riwayat transaksi...</div>';
+
+  try {
+    // Get current block
+    const latestHex = await rpc("eth_blockNumber", []);
+    const latest = parseInt(latestHex, 16);
+    const fromBlock = Math.max(0, latest - 50000); // ~7 hari terakhir
+    const fromBlockHex = "0x" + fromBlock.toString(16);
+
+    // Get all logs from contract
+    const logs = await rpc("eth_getLogs", [{
+      address: CONTRACT,
+      fromBlock: fromBlockHex,
+      toBlock: "latest"
+    }]);
+
+    if (!logs || logs.length === 0) {
+      txList.innerHTML = `
+        <div class="tx-item">
+          <div class="tx-detail" style="text-align:center;padding:10px;">
+            <div style="font-size:20px;margin-bottom:8px;">🤖</div>
+            <div style="color:#94a3b8;font-weight:600;">Bot sedang berjalan...</div>
+            <div style="margin-top:5px;">Belum ada transaksi arbitrage yang dieksekusi.</div>
+            <div style="margin-top:5px;">Bot sedang scanning peluang setiap 500ms.</div>
+            <div style="margin-top:8px;padding:8px;background:#052e16;border-radius:8px;color:#22c55e;">
+              ✅ Ini normal — bot hanya eksekusi jika profit ≥ $0.50
+            </div>
+          </div>
+        </div>`;
+      document.getElementById("totalTrades").textContent = "0";
+      document.getElementById("botLabel").textContent = "Bot Aktif — Scanning...";
+      document.getElementById("botDot").className = "bot-dot bot-online";
+      return;
+    }
+
+    // Parse logs
+    let trades = 0;
+    let profitTotal = 0;
+    let html = "";
+
+    // Sort newest first
+    const sortedLogs = logs.slice().reverse();
+
+    for (const log of sortedLogs) {
+      const topic = log.topics[0];
+      const blockNum = parseInt(log.blockNumber, 16);
+      const txHash = log.transactionHash;
+      const shortHash = txHash.slice(0,10)+"..."+txHash.slice(-8);
+
+      if (topic === TOPIC_ARB_EXECUTED) {
+        // ArbitrageExecuted(address token, uint256 amountIn, uint256 amountOut, uint256 profit)
+        trades++;
+        const profit = parseInt(log.data.slice(130, 194), 16) / 1e6; // USDC 6 decimals
+        profitTotal += profit;
+        html += `
+          <div class="tx-item">
+            <div class="tx-header">
+              <span class="tx-type tx-arb">⚡ ARBITRAGE</span>
+              <span class="tx-time">Block #${blockNum.toLocaleString()}</span>
+            </div>
+            <div class="tx-detail">
+              Profit: <span class="tx-profit">+$${profit.toFixed(4)}</span>
+            </div>
+            <div class="tx-hash"><a href="https://basescan.org/tx/${txHash}" target="_blank" style="color:#3b82f6">🔗 ${shortHash}</a></div>
+          </div>`;
+      } else if (topic === TOPIC_TOKEN_WD) {
+        const tokenAddr = "0x"+log.topics[1].slice(26);
+        const tokenName = tokenAddr.toLowerCase() === USDC_ADDR.toLowerCase() ? "USDC" : "WETH";
+        const amount = tokenName === "USDC" ? parseInt(log.data, 16)/1e6 : parseInt(log.data, 16)/1e18;
+        html += `
+          <div class="tx-item">
+            <div class="tx-header">
+              <span class="tx-type tx-wd">⬆️ WITHDRAW</span>
+              <span class="tx-time">Block #${blockNum.toLocaleString()}</span>
+            </div>
+            <div class="tx-detail">Withdraw ${amount.toFixed(4)} ${tokenName}</div>
+            <div class="tx-hash"><a href="https://basescan.org/tx/${txHash}" target="_blank" style="color:#3b82f6">🔗 ${shortHash}</a></div>
+          </div>`;
+      } else if (topic === TOPIC_ETH_WD) {
+        const amount = parseInt(log.data, 16)/1e18;
+        html += `
+          <div class="tx-item">
+            <div class="tx-header">
+              <span class="tx-type tx-wd">⬆️ WITHDRAW ETH</span>
+              <span class="tx-time">Block #${blockNum.toLocaleString()}</span>
+            </div>
+            <div class="tx-detail">Withdraw ${amount.toFixed(6)} ETH</div>
+            <div class="tx-hash"><a href="https://basescan.org/tx/${txHash}" target="_blank" style="color:#3b82f6">🔗 ${shortHash}</a></div>
+          </div>`;
+      }
+    }
+
+    totalTrades = trades;
+    totalProfitUSD = profitTotal;
+
+    document.getElementById("totalTrades").textContent = trades;
+    if (trades > 0) {
+      document.getElementById("totalProfit").textContent = "+$"+profitTotal.toFixed(4);
+      document.getElementById("totalProfit").className = "pnl-val pnl-pos";
+    }
+    document.getElementById("botLabel").textContent = trades > 0 ? `Bot Aktif — ${trades} Trade Berhasil` : "Bot Aktif — Scanning...";
+    document.getElementById("botDot").className = "bot-dot bot-online";
+
+    txList.innerHTML = html || '<div class="loading-spinner">Tidak ada transaksi dalam 50.000 block terakhir.</div>';
+
+  } catch(e) {
+    console.error("loadTxHistory:", e);
+    txList.innerHTML = `<div class="loading-spinner" style="color:#ef4444;">❌ Gagal memuat: ${e.message}</div>`;
+  }
+}
+
+// ── NAVIGATION ────────────────────────────────────────
+function switchNav(name, el) {
+  document.querySelectorAll(".nav-tab").forEach(t=>t.classList.remove("active"));
   el.classList.add("active");
   document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
   document.getElementById("panel-"+name).classList.add("active");
@@ -371,9 +528,9 @@ function selDep(tok, el) {
   document.querySelectorAll("#dep-ttabs .ttab").forEach(t=>t.classList.remove("active"));
   el.classList.add("active");
   const info = {
-    ETH:"<b>ETH:</b> Kirim ETH dari wallet Anda ke contract. (Catatan: ETH tidak bisa langsung digunakan bot — perlu di-wrap ke WETH dulu via Uniswap)",
-    WETH:"<b>WETH:</b> Kirim WETH ke contract. Bot akan gunakan untuk trading arbitrage.",
-    USDC:"<b>USDC:</b> Kirim USDC ke contract. Bot akan gunakan untuk trading arbitrage."
+    ETH:"<b>ETH:</b> Kirim ETH ke contract. (Catatan: ETH tidak bisa langsung digunakan bot — perlu di-wrap ke WETH dulu)",
+    WETH:"<b>WETH:</b> Kirim WETH ke contract. Bot akan gunakan untuk trading arbitrage. ✅",
+    USDC:"<b>USDC:</b> Kirim USDC ke contract. Bot akan gunakan untuk trading arbitrage. ✅"
   };
   document.getElementById("depInfo").innerHTML = info[tok];
 }
@@ -392,12 +549,17 @@ function selWd(tok, el) {
 
 function setMax(type) {
   if (type==="dep") {
-    const walletBal = depToken==="ETH" ? Math.max(0, bals.eth - 0.001) : depToken==="WETH" ? bals.weth : bals.usdc;
-    document.getElementById("depAmt").value = walletBal.toFixed(6);
+    const v = depToken==="ETH" ? Math.max(0,bals.eth-0.001) : depToken==="WETH" ? bals.weth : bals.usdc;
+    document.getElementById("depAmt").value = v.toFixed(6);
   } else if (type==="wd") {
     const v = wdToken==="USDC" ? bals.usdc : wdToken==="WETH" ? bals.weth : bals.eth;
     document.getElementById("wdAmt").value = v.toFixed(6);
   }
+}
+
+function refreshAll() {
+  fetchEthPrice().then(() => loadBalances());
+  loadTxHistory();
 }
 
 // ── HELPERS ──────────────────────────────────────────
@@ -407,7 +569,7 @@ function requireConn(sid) {
 }
 function setS(id, cls, msg) {
   const el = document.getElementById(id);
-  el.className = "status "+cls;
+  el.className = "status-box "+cls;
   el.innerHTML = msg;
 }
 function txLink(hash) {
@@ -415,8 +577,7 @@ function txLink(hash) {
 }
 function setBtnLoading(id, loading, text) {
   const btn = document.getElementById(id);
-  btn.disabled = loading;
-  btn.textContent = loading ? "⏳ Memproses..." : text;
+  if (btn) { btn.disabled = loading; btn.textContent = loading ? "⏳ Memproses..." : text; }
 }
 
 // ── DEPOSIT ──────────────────────────────────────────
@@ -424,20 +585,16 @@ async function doDeposit() {
   if (!requireConn("depStatus")) return;
   const amt = parseFloat(document.getElementById("depAmt").value);
   if (!amt || amt <= 0) { setS("depStatus","s-err","❌ Masukkan jumlah yang valid."); return; }
-  
   setBtnLoading("depBtn", true, "⬇️ Deposit ke Contract");
   try {
     setS("depStatus","s-load","⏳ Konfirmasi di MetaMask...");
     let tx;
     if (depToken === "ETH") {
-      tx = await signer.sendTransaction({ 
-        to: CONTRACT, 
-        value: ethers.utils.parseEther(amt.toString()) 
-      });
+      tx = await signer.sendTransaction({ to:CONTRACT, value:ethers.utils.parseEther(amt.toString()) });
     } else if (depToken === "WETH") {
       const weth = new ethers.Contract(WETH_ADDR, ERC20_ABI, signer);
       tx = await weth.transfer(CONTRACT, ethers.utils.parseEther(amt.toString()));
-    } else { // USDC
+    } else {
       const usdc = new ethers.Contract(USDC_ADDR, ERC20_ABI, signer);
       tx = await usdc.transfer(CONTRACT, ethers.utils.parseUnits(amt.toString(), 6));
     }
@@ -447,7 +604,7 @@ async function doDeposit() {
     document.getElementById("depAmt").value = "";
     await loadBalances();
   } catch(e) {
-    const msg = e.code === 4001 ? "Transaksi dibatalkan." : (e.reason || e.data?.message || e.message || "Gagal");
+    const msg = e.code===4001 ? "Transaksi dibatalkan." : (e.reason||e.data?.message||e.message||"Gagal");
     setS("depStatus","s-err","❌ "+msg);
   }
   setBtnLoading("depBtn", false, "⬇️ Deposit ke Contract");
@@ -458,42 +615,35 @@ async function doWithdraw() {
   if (!requireConn("wdStatus")) return;
   const amt = parseFloat(document.getElementById("wdAmt").value);
   if (!amt || amt <= 0) { setS("wdStatus","s-err","❌ Masukkan jumlah yang valid."); return; }
-  
   setBtnLoading("wdBtn", true, "⬆️ Withdraw ke Wallet");
   try {
     setS("wdStatus","s-load","⏳ Konfirmasi di MetaMask...");
     const c = new ethers.Contract(CONTRACT, CONTRACT_ABI, signer);
     let tx;
-    
     if (wdToken === "ETH") {
-      // withdrawETH() - tarik semua ETH
       tx = await c.withdrawETH();
     } else if (wdToken === "WETH") {
-      // withdrawToken(address, amount)
-      const amtWei = ethers.utils.parseEther(amt.toString());
-      tx = await c.withdrawToken(WETH_ADDR, amtWei);
-    } else { // USDC
-      const amtUnits = ethers.utils.parseUnits(amt.toString(), 6);
-      tx = await c.withdrawToken(USDC_ADDR, amtUnits);
+      tx = await c.withdrawToken(WETH_ADDR, ethers.utils.parseEther(amt.toString()));
+    } else {
+      tx = await c.withdrawToken(USDC_ADDR, ethers.utils.parseUnits(amt.toString(), 6));
     }
-    
     setS("wdStatus","s-load","⏳ Menunggu konfirmasi blockchain...");
     await tx.wait();
     setS("wdStatus","s-ok","✅ Berhasil withdraw "+amt+" "+wdToken+"!"+txLink(tx.hash));
     document.getElementById("wdAmt").value = "";
     await loadBalances();
+    await loadTxHistory();
   } catch(e) {
-    const msg = e.code === 4001 ? "Transaksi dibatalkan." : (e.reason || e.data?.message || e.message || "Gagal");
+    const msg = e.code===4001 ? "Transaksi dibatalkan." : (e.reason||e.data?.message||e.message||"Gagal");
     setS("wdStatus","s-err","❌ "+msg);
   }
   setBtnLoading("wdBtn", false, "⬆️ Withdraw ke Wallet");
 }
 
-// ── WITHDRAW ETH (dari tab Wrap) ──────────────────────
+// ── WITHDRAW ETH ──────────────────────────────────────
 async function doWithdrawETH() {
   if (!requireConn("wrapStatus")) return;
   if (bals.eth <= 0) { setS("wrapStatus","s-err","❌ Tidak ada ETH di contract."); return; }
-  
   setBtnLoading("wrapBtn", true, "⬆️ Tarik ETH ke Wallet");
   try {
     setS("wrapStatus","s-load","⏳ Konfirmasi di MetaMask...");
@@ -501,10 +651,10 @@ async function doWithdrawETH() {
     const tx = await c.withdrawETH();
     setS("wrapStatus","s-load","⏳ Menunggu konfirmasi blockchain...");
     await tx.wait();
-    setS("wrapStatus","s-ok","✅ ETH berhasil ditarik ke wallet Anda!"+txLink(tx.hash)+"<br>Sekarang Anda bisa swap ETH → WETH di Uniswap, lalu deposit WETH ke contract.");
+    setS("wrapStatus","s-ok","✅ ETH berhasil ditarik!"+txLink(tx.hash)+"<br>Sekarang swap ETH → WETH di Uniswap, lalu deposit WETH ke contract.");
     await loadBalances();
   } catch(e) {
-    const msg = e.code === 4001 ? "Transaksi dibatalkan." : (e.reason || e.data?.message || e.message || "Gagal");
+    const msg = e.code===4001 ? "Transaksi dibatalkan." : (e.reason||e.data?.message||e.message||"Gagal");
     setS("wrapStatus","s-err","❌ "+msg);
   }
   setBtnLoading("wrapBtn", false, "⬆️ Tarik ETH ke Wallet");
@@ -514,8 +664,7 @@ async function doWithdrawETH() {
 window.addEventListener("load", async () => {
   await fetchEthPrice();
   await loadBalances();
-  setInterval(loadBalances, 30000);
-  // Auto-connect jika sudah pernah connect sebelumnya
+  setInterval(() => { loadBalances(); }, 30000);
   if (window.ethereum && window.ethereum.selectedAddress) {
     connectWallet();
   }
