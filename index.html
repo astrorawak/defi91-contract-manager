@@ -410,7 +410,7 @@ async function loadTxHistory() {
     // Get current block
     const latestHex = await rpc("eth_blockNumber", []);
     const latest = parseInt(latestHex, 16);
-    const fromBlock = Math.max(0, latest - 50000); // ~7 hari terakhir
+    const fromBlock = Math.max(0, latest - 9999); // ~1 hari terakhir (max 10000 block)
     const fromBlockHex = "0x" + fromBlock.toString(16);
 
     // Get all logs from contract
